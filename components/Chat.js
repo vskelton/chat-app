@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, View, Text, KeyboardAvoidingView, Platform } from "react-native";
-import { GiftedChat, } from "react-native-gifted-chat";
+import { StyleSheet, View, KeyboardAvoidingView, Platform } from "react-native";
+import { Bubble, GiftedChat, } from "react-native-gifted-chat";
 
 const Chat = ({ route, navigation }) => {
   const { name, color } = route.params;
   const [messages, setMessages] = useState([]);
-  const onSend = (newMessages) => {
-    setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages))
-  }
-
+ 
   useEffect(() => {
     setMessages([
       {
@@ -34,14 +31,33 @@ const Chat = ({ route, navigation }) => {
     navigation.setOptions({ title: name });
   }, []);
 
+  const onSend = (newMessages) => {
+    setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages))
+  }
+
+  const renderBubble = (props) => {
+    return <Bubble
+    {...props}
+    wrapperStyle={{
+      right: {
+        backgroundColor: "#000"
+      },
+      left: {
+        backgroundColor: "#FFF"
+      }
+    }}
+    />
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: color }]}>
-      <Text>Hello Screen2!</Text>
       <GiftedChat
         messages={messages}
+        renderBubble={renderBubble}
         onSend={messages => onSend(messages)}
         user={{
-          _id: 1
+          _id: 1,
+          name
         }}
       />
       {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
@@ -53,8 +69,6 @@ const Chat = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
   }
 });
 
